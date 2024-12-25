@@ -1,11 +1,17 @@
 {
   "manifest_version": 2,
   "name": "Traing Extention",
-  "version": 0.1,
+  "version": "0.1",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.json"]
+      "js": ["content.js"]
     }
-  ]
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_action": {
+    "defualt_icon": "tx.png"
+  }
 }

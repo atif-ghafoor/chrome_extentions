@@ -1,1 +1,1 @@
-s;
+console.log("background is running");
