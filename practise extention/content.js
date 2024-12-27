@@ -1,6 +1,11 @@
 console.log("extention is running?");
-const bodyElement = document.querySelectorAll("p");
-console.log(bodyElement);
-for (elt of bodyElement) {
-  elt.style["backgroundColor"] = "pink";
+
+chrome.runtime.onMessage.addListener(messageReciver);
+
+function messageReciver(message, sender, sendResponse) {
+  console.log(message);
+  const paraElements = document.querySelectorAll("p");
+  for (elt of paraElements) {
+    elt.innerHTML = message;
+  }
 }
