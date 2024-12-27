@@ -1,0 +1,40 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #F3F3FF;
+  color: #0d66d3;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  padding: 30px;
+  width: 500px;
+}
+
+#selected-language {
+  color: #0a4a98;
+  padding: 10px 15px;
+  background-color: #ececff;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#languages {
+  width: 500px;
+  display: none;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+#languages div:hover {
+  cursor: pointer;
+  color: #0a4a98;
+}
