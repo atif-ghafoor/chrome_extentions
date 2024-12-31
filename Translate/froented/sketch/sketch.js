@@ -32,7 +32,7 @@ async function setup() {
         button.textContent = language.textContent;
         chrome.runtime.sendMessage({
           action: "language",
-          message: language.id,
+          message: language.textContent,
         });
         languageContainer.style["display"] = "none";
         displayLanguages = !displayLanguages;
@@ -40,6 +40,13 @@ async function setup() {
         localStorage.setItem("language", language.textContent);
       });
     });
+  }
+}
+chrome.runtime.onMessage.addListener(reciver);
+function reciver(request, sender, sendResponse) {
+  if (request.action === "translation") {
+    const translationBox = document.querySelector("#translation-box");
+    translationBox.textContent = request.translation;
   }
 }
 async function getLIstOfLanguages() {
