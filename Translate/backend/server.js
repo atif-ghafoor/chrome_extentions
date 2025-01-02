@@ -1,29 +1,42 @@
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
-
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json());
+const port = 3000;
 
-app.get("/weather", async (req, res) => {
+app.post("/generate", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://api.weatherapi.com/v1/forecast.json?key=${process.env.Weather_API_Key}&q=${req.query.q}&days=7&aqi=no&alerts=no`
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-4", // or "gpt-4" for better translations
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional translator.",
+          },
+          {
+            role: "user",
+            content: `Translate this: '${req.body.text}' into ${req.body.language}. Only provide the translation text, no extra information.`,
+          },
+        ],
+        max_tokens: 100,
+        temperature: 0.2,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.open_ai_key}`,
+        },
+      }
     );
-    res.json(response.data);
+    res.json(response.data.choices[0].message.content);
   } catch (error) {
-    res.status(500).json({ error: "failed to fetch data!" });
-  }
-});
-
-app.get("/sunTime", async (req, res) => {
-  try {
-    const response = await axios.get(
-      `https://api.weatherapi.com/v1/astronomy.json?key=${process.env.Weather_API_Key}&q=${req.query.q}`
-    );
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: "failed to fetch data!" });
+    console.error("Error:", error.response?.data || error.message);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
   }
 });
 
