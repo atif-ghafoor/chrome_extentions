@@ -97,6 +97,9 @@ function reciver(request, sender, sendResponse) {
     translationBox.textContent = request.message;
   } else if (request.action === "spinner") {
     showLoader();
+  } else if (request.action === "empty-api-key") {
+    translationBox.textContent =
+      "Please insert your OpenAi api key to translate. Your Text";
   }
 }
 async function getLIstOfLanguages() {
