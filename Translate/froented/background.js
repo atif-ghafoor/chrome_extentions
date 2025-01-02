@@ -9,7 +9,9 @@ async function reciver(request, sender, sendResponse) {
   }
   if (textSelected && languageSelected) {
     apiKey = localStorage.getItem("apiKey");
-    if (!apiKey) return;
+    if (!apiKey) {
+      chrome.runtime.sendMessage({ action: "empty-api-key" });
+    }
     const translation = await translateTextFromOpenAi(apiKey);
     console.log("translated", translation);
     chrome.runtime.sendMessage({ action: "translation", message: translation });
