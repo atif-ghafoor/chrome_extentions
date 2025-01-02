@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(reciver);
 let textSelected = null;
-let languageSelected = "en";
+let languageSelected = null;
 async function reciver(request, sender, sendResponse) {
   if (request.action === "text") {
     textSelected = request.message;
@@ -10,23 +10,25 @@ async function reciver(request, sender, sendResponse) {
   if (textSelected && languageSelected) {
     const translation = await getTranslation();
     console.log("translated", translation);
-    // chrome.runtime.sendMessage({ action: "translation", message: translation });
+    chrome.runtime.sendMessage({ action: "translation", message: translation });
   }
 }
 
 async function getTranslation() {
   try {
-    const request = await fetch("http://localhost:11434/api/generate", {
-      method: "post",
-      // body: JSON.stringify({
-      //   model: "mistral",
-      //   prompt: `Translate this '${textSelected}' in ${languageSelected}`,
-      //   stream: false,
-      // }),
+    chrome.runtime.sendMessage({ action: "spinner" });
+    console.log(textSelected, languageSelected);
+    const request = await fetch("http://localhost:3000/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: textSelected,
+        language: languageSelected,
+      }),
     });
     const data = await request.json();
     console.log("", data);
-    return data.translatedText;
+    return data;
   } catch (error) {
     console.log("error comes: ", error);
   }
