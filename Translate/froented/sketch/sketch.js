@@ -1,10 +1,5 @@
 async function setup() {
   noCanvas();
-  const translation = localStorage.getItem("translation");
-  if (translation) {
-    const translationBox = document.querySelector("#translation-box");
-    translationBox.textContent = translation;
-  }
   let selctedLanguage = localStorage.getItem("language");
   if (!selctedLanguage) {
     localStorage.setItem("language", "English");
@@ -61,7 +56,6 @@ function reciver(request, sender, sendResponse) {
     translationBox.textContent = request.message;
     console.log("this is runing means seting localstorage");
     console.log(request);
-    localStorage.setItem("translation", request.message);
   } else if (request.action === "spinner") {
     console.log("spinner show", spinnerBox);
     spinnerBox.style.display = "flex";
