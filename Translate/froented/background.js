@@ -8,28 +8,49 @@ async function reciver(request, sender, sendResponse) {
     languageSelected = request.message;
   }
   if (textSelected && languageSelected) {
-    const translation = await getTranslation();
+    apiKey = localStorage.getItem("apiKey");
+    if (!apiKey) return;
+    const translation = await translateTextFromOpenAi(apiKey);
     console.log("translated", translation);
     chrome.runtime.sendMessage({ action: "translation", message: translation });
   }
 }
 
-async function getTranslation() {
+async function translateTextFromOpenAi(apiKey) {
   try {
     chrome.runtime.sendMessage({ action: "spinner" });
-    console.log(textSelected, languageSelected);
-    const request = await fetch("http://localhost:3000/generate", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
       body: JSON.stringify({
-        text: textSelected,
-        language: languageSelected,
+        model: "gpt-4", // or "gpt-4" for better translations
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional translator.",
+          },
+          {
+            role: "user",
+            content: `Translate this: '${textSelected}' into ${languageSelected}. Only provide the translation text, no extra information.`,
+          },
+        ],
+        max_tokens: 100,
+        temperature: 0.2,
       }),
     });
-    const data = await request.json();
-    console.log("", data);
-    return data;
+    if (response.ok) {
+      const data = await response.json();
+      console.log("response", data);
+      const translatedText = data.choices[0].message.content;
+      return translatedText;
+    } else {
+      const errorData = await response.json();
+      console.error("error comes while translating:", errorData);
+    }
   } catch (error) {
-    console.log("error comes: ", error);
+    console.error("Error:", error.response?.data || error.message);
   }
 }
