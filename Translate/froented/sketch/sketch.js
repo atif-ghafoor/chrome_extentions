@@ -2,10 +2,13 @@ async function setup() {
   noCanvas();
   // for checking if user open api key is there or not
   const apiKeyBox = document.querySelector("#api_key_box");
+  const removeApiKeyButton = document.querySelector("#remove_api_key");
   let userOpenAiApiKey = localStorage.getItem("apiKey");
   if (userOpenAiApiKey) {
     apiKeyBox.style.display = "none";
+    removeApiKeyButton.style.display = "";
   } else {
+    removeApiKeyButton.style.display = "none";
     apiKeyBox.style.display = "flex";
   }
 
@@ -19,12 +22,25 @@ async function setup() {
       if (valid) {
         localStorage.setItem("apiKey", key);
         apiKeyBox.style.display = "none";
+        removeApiKeyButton.style.display = "";
         translationBox.textContent =
           "Your Api key is successfully added, now select text from page to Translate";
       } else {
         translationBox.textContent = "Your Api Key is Invalid!";
       }
     });
+  });
+
+  // if user want to remove apikey
+  removeApiKeyButton.addEventListener("click", () => {
+    showLoader();
+    setTimeout(() => {
+      hideLoader();
+      localStorage.removeItem("apiKey");
+      removeApiKeyButton.style.display = "none";
+      apiKeyBox.style.display = "flex";
+      translationBox.textContent = "Your api key is removed!";
+    }, 1000);
   });
 
   let selctedLanguage = localStorage.getItem("language");
